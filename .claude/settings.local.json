@@ -20,7 +20,18 @@
       "Bash(taskkill *)",
       "Bash(node install.js)",
       "Bash(ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js)",
-      "Bash(curl -s http://localhost:5173)"
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(npm run *)",
+      "Bash(set CSC_IDENTITY_AUTO_DISCOVERY=false)",
+      "Bash(\"D:\\\\git-clone-fengzijie_code\\\\Gitea Desktop\\\\node_modules\\\\7zip-bin\\\\win\\\\x64\\\\7za.exe\" x winCodeSign-2.6.0.7z -owinCodeSign-2.6.0)",
+      "Bash(\"D:\\\\git-clone-fengzijie_code\\\\Gitea Desktop\\\\node_modules\\\\7zip-bin\\\\win\\\\x64\\\\7za.exe\" x winCodeSign-2.6.0.7z -y)",
+      "Bash(cp -r winCodeSign-2.6.0/* 158107995/)",
+      "Bash(cp -r winCodeSign-2.6.0/* 491968535/)",
+      "Bash(cp -r winCodeSign-2.6.0/* 889022671/)",
+      "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false npm run pack)",
+      "WebFetch(domain:registry.npmmirror.com)",
+      "Bash(curl -s --max-time 10 \"https://registry.npmmirror.com/-/binary/electron-builder-binaries/\")",
+      "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false ELECTRON_BUILDER_BINARIES_MIRROR=https://registry.npmmirror.com/-/binary/electron-builder-binaries/ npm run pack)"
     ]
   }
 }
