@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)",
+      "Bash(npx electron *)",
+      "Bash(kill 1556 4884)",
+      "Bash(kill 313 322)",
+      "Bash(npx kill-port *)",
+      "Bash(lsof -ti:5173)",
+      "Bash(xargs kill)",
+      "Bash(fuser -k 5173/tcp)",
+      "Bash(kill 356 365)",
+      "Bash(tasklist)",
+      "Bash(cmd.exe /c 'rmdir /s /q \"D:\\\\Gitea Desktop\\\\node_modules\\\\electron\"')",
+      "Bash(cmd.exe /c 'rmdir /s /q \"D:\\\\Gitea Desktop\\\\node_modules\"')",
+      "Bash(cmd.exe *)",
+      "Bash(npm cache *)",
+      "Bash(taskkill *)",
+      "Bash(node install.js)",
+      "Bash(ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/ node node_modules/electron/install.js)",
+      "Bash(curl -s http://localhost:5173)"
+    ]
+  }
+}
