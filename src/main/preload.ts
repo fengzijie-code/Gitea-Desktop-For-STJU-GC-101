@@ -10,8 +10,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke('git:stage', repoPath, files),
     unstage: (repoPath: string, files: string[]) =>
       ipcRenderer.invoke('git:unstage', repoPath, files),
-    commit: (repoPath: string, message: string) =>
-      ipcRenderer.invoke('git:commit', repoPath, message),
+    commit: (repoPath: string, message: string, options?: { allowEmpty?: boolean }) =>
+      ipcRenderer.invoke('git:commit', repoPath, message, options),
     push: (repoPath: string, remote?: string, branch?: string) =>
       ipcRenderer.invoke('git:push', repoPath, remote, branch),
     pull: (repoPath: string, remote?: string, branch?: string) =>
@@ -50,6 +50,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke('gitea:get-repo', serverUrl, token, owner, repo),
     createRepo: (serverUrl: string, token: string, options: any) =>
       ipcRenderer.invoke('gitea:create-repo', serverUrl, token, options),
+    listIssues: (serverUrl: string, token: string, owner: string, repo: string, page?: number, state?: string) =>
+      ipcRenderer.invoke('gitea:list-issues', serverUrl, token, owner, repo, page, state),
+    getIssueComments: (serverUrl: string, token: string, owner: string, repo: string, index: number) =>
+      ipcRenderer.invoke('gitea:get-issue-comments', serverUrl, token, owner, repo, index),
+    listReleases: (serverUrl: string, token: string, owner: string, repo: string) =>
+      ipcRenderer.invoke('gitea:list-releases', serverUrl, token, owner, repo),
+    createRelease: (serverUrl: string, token: string, owner: string, repo: string,
+      options: { tag_name: string; name: string; body: string }) =>
+      ipcRenderer.invoke('gitea:create-release', serverUrl, token, owner, repo, options),
   },
   file: {
     selectDirectory: () => ipcRenderer.invoke('file:select-directory'),

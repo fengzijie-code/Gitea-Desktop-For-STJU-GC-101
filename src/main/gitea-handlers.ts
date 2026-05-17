@@ -69,4 +69,40 @@ export function registerGiteaHandlers() {
       body: options,
     });
   });
+
+  ipcMain.handle('gitea:list-issues',
+    async (_event, serverUrl: string, token: string, owner: string, repo: string, page?: number, state?: string) => {
+      const p = page || 1;
+      const s = state || 'all';
+      return await giteaFetch(serverUrl, token,
+        `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues?page=${p}&limit=20&state=${s}&type=issues&sort=created&direction=desc`
+      );
+    }
+  );
+
+  ipcMain.handle('gitea:get-issue-comments',
+    async (_event, serverUrl: string, token: string, owner: string, repo: string, index: number) => {
+      return await giteaFetch(serverUrl, token,
+        `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${index}/comments`
+      );
+    }
+  );
+
+  ipcMain.handle('gitea:list-releases',
+    async (_event, serverUrl: string, token: string, owner: string, repo: string) => {
+      return await giteaFetch(serverUrl, token,
+        `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/releases?limit=50`
+      );
+    }
+  );
+
+  ipcMain.handle('gitea:create-release',
+    async (_event, serverUrl: string, token: string, owner: string, repo: string,
+      options: { tag_name: string; name: string; body: string }) => {
+      return await giteaFetch(serverUrl, token,
+        `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/releases`,
+        { method: 'POST', body: options }
+      );
+    }
+  );
 }

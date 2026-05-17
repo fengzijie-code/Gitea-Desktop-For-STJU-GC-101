@@ -19,6 +19,8 @@ interface AppContextType extends AppState {
   removeAccount: (serverUrl: string) => Promise<void>;
   setError: (error: string | null) => void;
   updateConfig: (config: AppConfig) => Promise<void>;
+  getRepoInfo: () => Promise<{ owner: string; repo: string } | null>;
+  getActiveAccount: () => GiteaAccount | null;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -120,6 +122,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     await updateConfig(newConfig);
   }, [config, updateConfig]);
 
+  const getActiveAccount = useCallback((): GiteaAccount | null => {
+    return config.accounts[0] || null;
+  }, [config.accounts]);
+
+  const getRepoInfo = useCallback(async (): Promise<{ owner: string; repo: string } | null> => {
+    if (!currentRepo) return null;
+    try {
+      const remotes = await window.electronAPI.git.getRemotes(currentRepo.path);
+      const origin = remotes.find((r: RemoteInfo) => r.name === 'origin');
+      if (!origin) return null;
+      const url = origin.refs.fetch || origin.refs.push;
+      const match = url.match(/[/:]([^/:]+)\/([^/.]+?)(?:\.git)?$/);
+      if (!match) return null;
+      return { owner: match[1], repo: match[2] };
+    } catch {
+      return null;
+    }
+  }, [currentRepo]);
+
   return (
     <AppContext.Provider
       value={{
@@ -138,6 +159,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         removeAccount,
         setError,
         updateConfig,
+        getRepoInfo,
+        getActiveAccount,
       }}
     >
       {children}

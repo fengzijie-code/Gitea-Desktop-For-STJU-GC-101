@@ -6,6 +6,8 @@ import WelcomePage from './pages/WelcomePage';
 import ChangesPage from './pages/ChangesPage';
 import HistoryPage from './pages/HistoryPage';
 import BranchesPage from './pages/BranchesPage';
+import IssuesPage from './pages/IssuesPage';
+import ReleasesPage from './pages/ReleasesPage';
 import SettingsPage from './pages/SettingsPage';
 import './styles/global.css';
 
@@ -23,6 +25,8 @@ function AppContent() {
           <Route path="/changes" element={<ChangesPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/branches" element={<BranchesPage />} />
+          <Route path="/issues" element={<IssuesPage />} />
+          <Route path="/releases" element={<ReleasesPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>

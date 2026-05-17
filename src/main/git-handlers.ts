@@ -47,9 +47,10 @@ export function registerGitHandlers() {
     return { success: true };
   });
 
-  ipcMain.handle('git:commit', async (_event, repoPath: string, message: string) => {
+  ipcMain.handle('git:commit', async (_event, repoPath: string, message: string, options?: { allowEmpty?: boolean }) => {
     const git = getGit(repoPath);
-    const result = await git.commit(message);
+    const args = options?.allowEmpty ? ['--allow-empty'] : [];
+    const result = await git.commit(message, args);
     return { success: true, summary: result.summary };
   });
 

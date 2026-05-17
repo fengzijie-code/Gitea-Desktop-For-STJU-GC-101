@@ -3,7 +3,7 @@ interface GitAPI {
   getStatus(repoPath: string): Promise<GitStatus>;
   stage(repoPath: string, files: string[]): Promise<{ success: boolean }>;
   unstage(repoPath: string, files: string[]): Promise<{ success: boolean }>;
-  commit(repoPath: string, message: string): Promise<{ success: boolean; summary: any }>;
+  commit(repoPath: string, message: string, options?: { allowEmpty?: boolean }): Promise<{ success: boolean; summary: any }>;
   push(repoPath: string, remote?: string, branch?: string): Promise<{ success: boolean }>;
   pull(repoPath: string, remote?: string, branch?: string): Promise<{ success: boolean; summary: any }>;
   fetch(repoPath: string): Promise<{ success: boolean }>;
@@ -25,6 +25,11 @@ interface GiteaAPI {
   listRepos(serverUrl: string, token: string): Promise<any[]>;
   getRepo(serverUrl: string, token: string, owner: string, repo: string): Promise<any>;
   createRepo(serverUrl: string, token: string, options: any): Promise<any>;
+  listIssues(serverUrl: string, token: string, owner: string, repo: string, page?: number, state?: string): Promise<GiteaIssue[]>;
+  getIssueComments(serverUrl: string, token: string, owner: string, repo: string, index: number): Promise<GiteaComment[]>;
+  listReleases(serverUrl: string, token: string, owner: string, repo: string): Promise<GiteaRelease[]>;
+  createRelease(serverUrl: string, token: string, owner: string, repo: string,
+    options: { tag_name: string; name: string; body: string }): Promise<GiteaRelease>;
 }
 
 interface FileAPI {
@@ -83,6 +88,37 @@ interface SavedRepository {
   path: string;
   name: string;
   lastOpened: string;
+}
+
+interface GiteaIssue {
+  id: number;
+  number: number;
+  title: string;
+  body: string;
+  state: 'open' | 'closed';
+  created_at: string;
+  updated_at: string;
+  user: { login: string; avatar_url: string };
+  labels: { name: string; color: string }[];
+  comments: number;
+}
+
+interface GiteaComment {
+  id: number;
+  body: string;
+  created_at: string;
+  user: { login: string; avatar_url: string };
+}
+
+interface GiteaRelease {
+  id: number;
+  tag_name: string;
+  name: string;
+  body: string;
+  created_at: string;
+  author: { login: string; avatar_url: string };
+  draft: boolean;
+  prerelease: boolean;
 }
 
 declare global {

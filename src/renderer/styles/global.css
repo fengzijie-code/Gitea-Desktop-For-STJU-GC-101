@@ -509,13 +509,65 @@ body {
   color: var(--text-primary);
   font-family: inherit;
   font-size: 13px;
-  resize: vertical;
   margin-bottom: 8px;
+  box-sizing: border-box;
 }
 
 .commit-input:focus {
   outline: none;
   border-color: var(--accent);
+}
+
+.commit-form-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.commit-form-row select {
+  flex: 1;
+  padding: 6px 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.commit-form-row select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.commit-options {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.commit-option-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.commit-option-label input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+.commit-preview {
+  padding: 8px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius);
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  word-break: break-all;
 }
 
 .btn-commit {
@@ -873,4 +925,378 @@ input:focus {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--bg-active);
+}
+
+/* Issues Page */
+.issues-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.issues-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.issues-toolbar h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.issues-filter {
+  display: flex;
+  gap: 4px;
+}
+
+.issues-filter .btn-small.active {
+  background: var(--accent);
+  color: var(--bg-tertiary);
+  border-color: var(--accent);
+}
+
+.issues-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.issue-list {
+  width: 360px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+.issue-item {
+  padding: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+
+.issue-item:hover {
+  background: var(--bg-hover);
+}
+
+.issue-item.selected {
+  background: var(--bg-surface);
+}
+
+.issue-item-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.issue-title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.issue-state {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.issue-state.open {
+  color: var(--green);
+}
+
+.issue-state.closed {
+  color: var(--red);
+}
+
+.issue-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  align-items: center;
+}
+
+.joj-score-badge {
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.joj-score-badge.perfect {
+  background: rgba(166, 227, 161, 0.2);
+  color: var(--green);
+}
+
+.joj-score-badge.pass {
+  background: rgba(249, 226, 175, 0.2);
+  color: var(--yellow);
+}
+
+.joj-score-badge.fail {
+  background: rgba(243, 139, 168, 0.2);
+  color: var(--red);
+}
+
+.issue-detail {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.issue-detail-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 17px;
+  margin: 0 0 16px 0;
+}
+
+.joj-score-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.joj-score-card.perfect {
+  background: rgba(166, 227, 161, 0.15);
+  color: var(--green);
+}
+
+.joj-score-card.pass {
+  background: rgba(249, 226, 175, 0.15);
+  color: var(--yellow);
+}
+
+.joj-score-card.fail {
+  background: rgba(243, 139, 168, 0.15);
+  color: var(--red);
+}
+
+.joj-score-value {
+  font-size: 20px;
+}
+
+.issue-body {
+  margin-bottom: 16px;
+}
+
+.issue-body pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.comment-list h4 {
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.comment-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.comment-item {
+  padding: 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+}
+
+.comment-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.comment-date {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.comment-body {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Releases Page */
+.releases-page {
+  padding: 16px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.releases-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.releases-toolbar h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.create-release-form {
+  background: var(--bg-secondary);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.tag-suggestion {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.tag-suggestion button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 12px;
+  padding: 0;
+}
+
+.release-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.release-item {
+  padding: 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.release-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.release-tag {
+  font-family: 'Cascadia Code', 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  padding: 2px 8px;
+  background: rgba(137, 180, 250, 0.1);
+  border-radius: 3px;
+}
+
+.release-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.release-body {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.release-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-dialog {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 420px;
+  width: 90%;
+}
+
+.modal-dialog h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+}
+
+.modal-dialog p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }

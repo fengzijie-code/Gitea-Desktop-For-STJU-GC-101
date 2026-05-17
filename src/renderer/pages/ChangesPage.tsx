@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
+import CommitForm from '../components/CommitForm';
 
 export default function ChangesPage() {
   const { currentRepo, status, refreshStatus, setError } = useAppContext();
-  const [commitMessage, setCommitMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [diff, setDiff] = useState('');
   const [pushing, setPushing] = useState(false);
@@ -70,12 +70,11 @@ export default function ChangesPage() {
     if (all.length > 0) handleUnstage(all);
   };
 
-  const handleCommit = async () => {
-    if (!commitMessage.trim() || stagedFiles.length === 0) return;
+  const handleCommit = async (message: string, options?: { allowEmpty?: boolean }) => {
+    if (!message.trim()) return;
     setCommitting(true);
     try {
-      await window.electronAPI.git.commit(currentRepo.path, commitMessage.trim());
-      setCommitMessage('');
+      await window.electronAPI.git.commit(currentRepo.path, message.trim(), options);
       await refreshStatus();
     } catch (err: any) {
       setError(err.message);
@@ -198,22 +197,12 @@ export default function ChangesPage() {
             </div>
           </div>
 
-          <div className="commit-section">
-            <textarea
-              className="commit-input"
-              placeholder="Commit message"
-              value={commitMessage}
-              onChange={(e) => setCommitMessage(e.target.value)}
-              rows={3}
-            />
-            <button
-              className="btn-primary btn-commit"
-              onClick={handleCommit}
-              disabled={committing || !commitMessage.trim() || stagedFiles.length === 0}
-            >
-              {committing ? 'Committing...' : `Commit to ${status?.current || 'branch'}`}
-            </button>
-          </div>
+          <CommitForm
+            currentBranch={status?.current || 'branch'}
+            stagedCount={stagedFiles.length}
+            committing={committing}
+            onCommit={handleCommit}
+          />
         </div>
 
         <div className="diff-panel">

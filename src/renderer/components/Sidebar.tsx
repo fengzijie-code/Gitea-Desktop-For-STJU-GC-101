@@ -12,6 +12,8 @@ export default function Sidebar() {
     { path: '/changes', label: 'Changes', icon: '◎' },
     { path: '/history', label: 'History', icon: '⏱' },
     { path: '/branches', label: 'Branches', icon: '⑃' },
+    { path: '/issues', label: 'Issues', icon: '!' },
+    { path: '/releases', label: 'Releases', icon: '⬡' },
     { path: '/settings', label: 'Settings', icon: '⚙' },
   ];
 
