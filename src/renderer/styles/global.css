@@ -295,16 +295,16 @@ body {
 
 /* Welcome Page */
 .welcome-page {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: 40px;
 }
 
 .welcome-content {
   max-width: 700px;
   width: 100%;
+  margin: 0 auto;
 }
 
 .welcome-content h1 {
@@ -1375,4 +1375,61 @@ input:focus {
 
 .repo-dropdown-item:hover .repo-remove-btn {
   opacity: 1;
+}
+
+/* Create Repository Form */
+.create-repo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.create-repo-form .form-group {
+  margin-bottom: 8px;
+}
+
+.path-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.path-selector input {
+  flex: 1;
+  cursor: default;
+}
+
+.path-preview {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-row-2col select,
+.create-repo-form select {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.form-row-2col select:focus,
+.create-repo-form select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn-create-repo {
+  margin-top: 8px;
+  width: 100%;
 }

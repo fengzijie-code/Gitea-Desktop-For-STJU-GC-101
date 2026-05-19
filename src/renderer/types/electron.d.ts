@@ -1,3 +1,12 @@
+interface InitRepoOptions {
+  name: string;
+  description: string;
+  localPath: string;
+  gitignoreTemplate: string;
+  licenseTemplate: string;
+  authorName?: string;
+}
+
 interface GitAPI {
   clone(url: string, targetPath: string): Promise<{ success: boolean }>;
   getStatus(repoPath: string): Promise<GitStatus>;
@@ -16,8 +25,10 @@ interface GitAPI {
   getDiff(repoPath: string, filePath?: string): Promise<string>;
   getDiffStaged(repoPath: string, filePath?: string): Promise<string>;
   getRemotes(repoPath: string): Promise<RemoteInfo[]>;
-  init(repoPath: string): Promise<{ success: boolean }>;
+  init(options: InitRepoOptions): Promise<{ success: boolean; repoPath: string }>;
   addRemote(repoPath: string, name: string, url: string): Promise<{ success: boolean }>;
+  getInitTemplates(): Promise<{ gitignoreTemplates: string[]; licenseTemplates: string[] }>;
+  getUserName(): Promise<string>;
 }
 
 interface GiteaAPI {

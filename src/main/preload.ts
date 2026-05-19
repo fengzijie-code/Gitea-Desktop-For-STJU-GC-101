@@ -36,10 +36,21 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke('git:diff-staged', repoPath, filePath),
     getRemotes: (repoPath: string) =>
       ipcRenderer.invoke('git:remotes', repoPath),
-    init: (repoPath: string) =>
-      ipcRenderer.invoke('git:init', repoPath),
+    init: (options: {
+      name: string;
+      description: string;
+      localPath: string;
+      gitignoreTemplate: string;
+      licenseTemplate: string;
+      authorName?: string;
+    }) =>
+      ipcRenderer.invoke('git:init', options),
     addRemote: (repoPath: string, name: string, url: string) =>
       ipcRenderer.invoke('git:add-remote', repoPath, name, url),
+    getInitTemplates: () =>
+      ipcRenderer.invoke('git:get-init-templates'),
+    getUserName: () =>
+      ipcRenderer.invoke('git:get-user-name'),
   },
   gitea: {
     testConnection: (serverUrl: string, token: string) =>

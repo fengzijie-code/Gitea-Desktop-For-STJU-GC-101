@@ -2,6 +2,17 @@ import { ipcMain } from 'electron';
 import simpleGit, { SimpleGit } from 'simple-git';
 import path from 'path';
 import fs from 'fs';
+import { gitignoreTemplates } from './templates/gitignore';
+import { licenseTemplates } from './templates/license';
+
+export interface InitRepoOptions {
+  name: string;
+  description: string;
+  localPath: string;
+  gitignoreTemplate: string;
+  licenseTemplate: string;
+  authorName?: string;
+}
 
 function findSshCommand(): string | undefined {
   if (process.platform !== 'win32') return undefined;
@@ -251,11 +262,83 @@ export function registerGitHandlers() {
     }
   });
 
-  ipcMain.handle('git:init', async (_event, repoPath: string) => {
+  ipcMain.handle('git:init', async (_event, options: InitRepoOptions) => {
     try {
-      const git = getGit(repoPath);
+      const repoDir = path.join(options.localPath, options.name);
+      if (!fs.existsSync(repoDir)) {
+        fs.mkdirSync(repoDir, { recursive: true });
+      }
+
+      const git = getGit(repoDir);
       await git.init();
-      return { success: true };
+      await git.raw(['checkout', '-b', 'master']);
+
+      const gitattributes = `# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files
+*.md text
+*.txt text
+*.json text
+*.xml text
+*.yml text
+*.yaml text
+*.html text
+*.css text
+*.js text
+*.ts text
+*.py text
+*.go text
+*.java text
+*.c text
+*.cpp text
+*.h text
+*.rs text
+*.sh text eol=lf
+
+# Declare binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+`;
+      fs.writeFileSync(path.join(repoDir, '.gitattributes'), gitattributes, 'utf-8');
+
+      if (options.gitignoreTemplate && gitignoreTemplates[options.gitignoreTemplate]) {
+        fs.writeFileSync(
+          path.join(repoDir, '.gitignore'),
+          gitignoreTemplates[options.gitignoreTemplate],
+          'utf-8',
+        );
+      }
+
+      if (options.licenseTemplate && licenseTemplates[options.licenseTemplate]) {
+        const year = new Date().getFullYear();
+        const author = options.authorName || 'Author';
+        fs.writeFileSync(
+          path.join(repoDir, 'LICENSE'),
+          licenseTemplates[options.licenseTemplate](year, author),
+          'utf-8',
+        );
+      }
+
+      const descLine = options.description ? `\n\n${options.description}` : '';
+      const readme = `# ${options.name}${descLine}\n`;
+      fs.writeFileSync(path.join(repoDir, 'README.md'), readme, 'utf-8');
+
+      await git.add('.');
+      await git.commit('Initial commit');
+
+      return { success: true, repoPath: repoDir };
     } catch (err: any) {
       console.error('[git:init]', err.message);
       throw err;
@@ -270,6 +353,22 @@ export function registerGitHandlers() {
     } catch (err: any) {
       console.error('[git:add-remote]', err.message);
       throw err;
+    }
+  });
+
+  ipcMain.handle('git:get-init-templates', async () => {
+    const { gitignoreNames } = await import('./templates/gitignore');
+    const { licenseNames } = await import('./templates/license');
+    return { gitignoreTemplates: gitignoreNames, licenseTemplates: licenseNames };
+  });
+
+  ipcMain.handle('git:get-user-name', async () => {
+    try {
+      const git = simpleGit();
+      const name = await git.raw(['config', 'user.name']);
+      return name.trim();
+    } catch {
+      return '';
     }
   });
 }

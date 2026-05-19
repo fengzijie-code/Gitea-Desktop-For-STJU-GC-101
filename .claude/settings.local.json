@@ -31,7 +31,9 @@
       "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false npm run pack)",
       "WebFetch(domain:registry.npmmirror.com)",
       "Bash(curl -s --max-time 10 \"https://registry.npmmirror.com/-/binary/electron-builder-binaries/\")",
-      "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false ELECTRON_BUILDER_BINARIES_MIRROR=https://registry.npmmirror.com/-/binary/electron-builder-binaries/ npm run pack)"
+      "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false ELECTRON_BUILDER_BINARIES_MIRROR=https://registry.npmmirror.com/-/binary/electron-builder-binaries/ npm run pack)",
+      "Bash(grep -E \"\\\\.\\(ts|js|json|config|rc\\)$\")",
+      "Bash(npx electron-builder *)"
     ]
   }
 }

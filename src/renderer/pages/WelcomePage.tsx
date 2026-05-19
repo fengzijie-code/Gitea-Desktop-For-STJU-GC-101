@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 
 export default function WelcomePage() {
-  const { addRepository, setCurrentRepo, removeRepository, config, setError } = useAppContext();
+  const { addRepository, setCurrentRepo, setError } = useAppContext();
   const navigate = useNavigate();
   const [cloneUrl, setCloneUrl] = useState('');
   const [cloning, setCloning] = useState(false);
   const [cloneError, setCloneError] = useState('');
-  const [initRemoteUrl, setInitRemoteUrl] = useState('');
   const [initializing, setInitializing] = useState(false);
+
+  const [repoName, setRepoName] = useState('');
+  const [repoDescription, setRepoDescription] = useState('');
+  const [repoLocalPath, setRepoLocalPath] = useState('');
+  const [gitignoreTemplate, setGitignoreTemplate] = useState('');
+  const [licenseTemplate, setLicenseTemplate] = useState('');
+  const [initRemoteUrl, setInitRemoteUrl] = useState('');
+  const [gitignoreOptions, setGitignoreOptions] = useState<string[]>([]);
+  const [licenseOptions, setLicenseOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    window.electronAPI.git.getInitTemplates().then((templates) => {
+      setGitignoreOptions(templates.gitignoreTemplates);
+      setLicenseOptions(templates.licenseTemplates);
+    });
+  }, []);
 
   const handleOpenLocal = async () => {
     const dir = await window.electronAPI.file.selectDirectory();
@@ -51,19 +66,31 @@ export default function WelcomePage() {
     }
   };
 
-  const handleInitRepo = async () => {
+  const handleSelectPath = async () => {
     const dir = await window.electronAPI.file.selectDirectory();
-    if (!dir) return;
+    if (dir) setRepoLocalPath(dir);
+  };
+
+  const handleInitRepo = async () => {
+    if (!repoName.trim() || !repoLocalPath.trim()) return;
     setInitializing(true);
     try {
-      await window.electronAPI.git.init(dir);
+      const authorName = await window.electronAPI.git.getUserName();
+      const result = await window.electronAPI.git.init({
+        name: repoName.trim(),
+        description: repoDescription.trim(),
+        localPath: repoLocalPath.trim(),
+        gitignoreTemplate,
+        licenseTemplate,
+        authorName: authorName || undefined,
+      });
+      const repoPath = result.repoPath;
       if (initRemoteUrl.trim()) {
-        await window.electronAPI.git.addRemote(dir, 'origin', initRemoteUrl.trim());
+        await window.electronAPI.git.addRemote(repoPath, 'origin', initRemoteUrl.trim());
       }
-      const name = dir.split(/[\\/]/).pop() || dir;
       const repo: SavedRepository = {
-        path: dir,
-        name,
+        path: repoPath,
+        name: repoName.trim(),
         lastOpened: new Date().toISOString(),
       };
       await addRepository(repo);
@@ -73,31 +100,7 @@ export default function WelcomePage() {
       setError(err.message);
     } finally {
       setInitializing(false);
-      setInitRemoteUrl('');
     }
-  };
-
-  const handleOpenInVSCode = async (repoPath: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      await window.electronAPI.shell.openInVSCode(repoPath);
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
-
-  const handleOpenInExplorer = async (repoPath: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      await window.electronAPI.shell.openInExplorer(repoPath);
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
-
-  const handleRemoveRepo = async (repoPath: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    await removeRepository(repoPath);
   };
 
   return (
@@ -138,70 +141,87 @@ export default function WelcomePage() {
 
           <div className="welcome-card">
             <h3>Create New Repository</h3>
-            <p>Initialize a new Git repository in a local directory.</p>
-            <div className="clone-form">
-              <input
-                type="text"
-                placeholder="Remote URL (optional)"
-                value={initRemoteUrl}
-                onChange={(e) => setInitRemoteUrl(e.target.value)}
-              />
+            <div className="create-repo-form">
+              <div className="form-group">
+                <label>Name</label>
+                <input
+                  type="text"
+                  placeholder="my-project"
+                  value={repoName}
+                  onChange={(e) => setRepoName(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <input
+                  type="text"
+                  placeholder="A short description (optional)"
+                  value={repoDescription}
+                  onChange={(e) => setRepoDescription(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Local Path</label>
+                <div className="path-selector">
+                  <input
+                    type="text"
+                    placeholder="Select a folder..."
+                    value={repoLocalPath}
+                    readOnly
+                  />
+                  <button className="btn-secondary" onClick={handleSelectPath}>Browse</button>
+                </div>
+                {repoLocalPath && repoName && (
+                  <span className="path-preview">
+                    Repository will be created at: {repoLocalPath}/{repoName}
+                  </span>
+                )}
+              </div>
+              <div className="form-row-2col">
+                <div className="form-group">
+                  <label>.gitignore Template</label>
+                  <select
+                    value={gitignoreTemplate}
+                    onChange={(e) => setGitignoreTemplate(e.target.value)}
+                  >
+                    <option value="">None</option>
+                    {gitignoreOptions.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>License</label>
+                  <select
+                    value={licenseTemplate}
+                    onChange={(e) => setLicenseTemplate(e.target.value)}
+                  >
+                    <option value="">None</option>
+                    {licenseOptions.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Remote URL (optional)</label>
+                <input
+                  type="text"
+                  placeholder="https://your-gitea.com/user/repo.git"
+                  value={initRemoteUrl}
+                  onChange={(e) => setInitRemoteUrl(e.target.value)}
+                />
+              </div>
               <button
-                className="btn-primary"
+                className="btn-primary btn-create-repo"
                 onClick={handleInitRepo}
-                disabled={initializing}
+                disabled={initializing || !repoName.trim() || !repoLocalPath.trim()}
               >
-                {initializing ? 'Initializing...' : 'Init Repository'}
+                {initializing ? 'Creating...' : 'Create Repository'}
               </button>
             </div>
           </div>
         </div>
-
-        {config.repositories.length > 0 && (
-          <div className="recent-repos">
-            <h3>Recent Repositories</h3>
-            <div className="recent-repos-list">
-              {config.repositories.map((repo) => (
-                <div
-                  key={repo.path}
-                  className="recent-repo-item"
-                  onClick={() => {
-                    setCurrentRepo(repo);
-                    navigate('/changes');
-                  }}
-                >
-                  <div className="recent-repo-info">
-                    <span className="recent-repo-name">{repo.name}</span>
-                    <span className="recent-repo-path">{repo.path}</span>
-                  </div>
-                  <div className="recent-repo-actions">
-                    <button
-                      className="btn-icon"
-                      onClick={(e) => handleOpenInVSCode(repo.path, e)}
-                      title="Open in VS Code"
-                    >
-                      {'</>'}
-                    </button>
-                    <button
-                      className="btn-icon"
-                      onClick={(e) => handleOpenInExplorer(repo.path, e)}
-                      title="Open in Explorer"
-                    >
-                      {'[ ]'}
-                    </button>
-                    <button
-                      className="btn-icon btn-danger"
-                      onClick={(e) => handleRemoveRepo(repo.path, e)}
-                      title="Remove from list"
-                    >
-                      x
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
