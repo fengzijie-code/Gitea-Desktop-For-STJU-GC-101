@@ -20,11 +20,10 @@ function createWindow() {
     },
   });
 
+  loadHome();
+
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
-  } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   }
 
   mainWindow.on('closed', () => {
@@ -32,10 +31,24 @@ function createWindow() {
   });
 }
 
+function loadHome() {
+  if (!mainWindow) return;
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.loadURL('http://localhost:5173');
+  } else {
+    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+  }
+}
+
 app.whenReady().then(() => {
   registerGitHandlers();
   registerGiteaHandlers();
   registerFileHandlers();
+
+  ipcMain.handle('app:reload-home', () => {
+    loadHome();
+  });
+
   createWindow();
 
   app.on('activate', () => {

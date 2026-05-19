@@ -144,6 +144,9 @@ declare global {
       gitea: GiteaAPI;
       file: FileAPI;
       shell: ShellAPI;
+      app: {
+        reloadHome(): Promise<void>;
+      };
     };
   }
 }

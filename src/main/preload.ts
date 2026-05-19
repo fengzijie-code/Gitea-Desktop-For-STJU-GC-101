@@ -82,4 +82,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openInExplorer: (repoPath: string) =>
       ipcRenderer.invoke('shell:open-in-explorer', repoPath),
   },
+  app: {
+    reloadHome: () => ipcRenderer.invoke('app:reload-home'),
+  },
 });

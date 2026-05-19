@@ -24,7 +24,7 @@ export default function RepoSelector() {
 
   const handleClone = () => {
     setShowDropdown(false);
-    navigate('/welcome');
+    window.electronAPI.app.reloadHome();
   };
 
   const handleSelect = (repo: SavedRepository) => {

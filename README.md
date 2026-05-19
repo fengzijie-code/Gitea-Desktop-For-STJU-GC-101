@@ -80,6 +80,12 @@ A desktop Git client for [Gitea](https://gitea.io) servers, inspired by GitHub D
 To package the app as a Windows installer:
 
 ```bash
+npm run pack
+```
+
+You must do this before build，or all things you are doing will not change
+
+```bash
 npx electron-builder --win
 ```
 
