@@ -23,8 +23,8 @@ export default function RepoSelector() {
   };
 
   const handleClone = () => {
-    navigate('/');
     setShowDropdown(false);
+    navigate('/welcome');
   };
 
   const handleSelect = (repo: SavedRepository) => {

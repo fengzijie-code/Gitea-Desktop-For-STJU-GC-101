@@ -28,6 +28,7 @@ function AppContent() {
           <Route path="/" element={
             currentRepo ? <Navigate to="/changes" /> : <WelcomePage />
           } />
+          <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/changes" element={<ChangesPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/branches" element={<BranchesPage />} />
