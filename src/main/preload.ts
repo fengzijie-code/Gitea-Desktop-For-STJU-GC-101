@@ -65,4 +65,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     readConfig: () => ipcRenderer.invoke('file:read-config'),
     writeConfig: (config: any) => ipcRenderer.invoke('file:write-config', config),
   },
+  shell: {
+    openInVSCode: (repoPath: string) =>
+      ipcRenderer.invoke('shell:open-in-vscode', repoPath),
+    openInExplorer: (repoPath: string) =>
+      ipcRenderer.invoke('shell:open-in-explorer', repoPath),
+  },
 });

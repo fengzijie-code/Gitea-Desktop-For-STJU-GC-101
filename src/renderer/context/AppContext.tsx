@@ -72,6 +72,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCurrentRepoState(repo);
     setStatus(null);
     setCurrentBranch('');
+    setError(null);
   }, []);
 
   useEffect(() => {

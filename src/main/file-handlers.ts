@@ -1,4 +1,5 @@
-import { ipcMain, dialog, app } from 'electron';
+import { ipcMain, dialog, app, shell } from 'electron';
+import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
@@ -31,6 +32,24 @@ export function registerFileHandlers() {
       fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2));
+    return { success: true };
+  });
+
+  ipcMain.handle('shell:open-in-vscode', async (_event, repoPath: string) => {
+    return new Promise((resolve, reject) => {
+      exec(`code "${repoPath}"`, (error) => {
+        if (error) {
+          reject(new Error('Failed to open VS Code. Make sure "code" is in your PATH.'));
+        } else {
+          resolve({ success: true });
+        }
+      });
+    });
+  });
+
+  ipcMain.handle('shell:open-in-explorer', async (_event, repoPath: string) => {
+    const result = await shell.openPath(repoPath);
+    if (result) throw new Error(result);
     return { success: true };
   });
 }

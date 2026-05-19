@@ -243,6 +243,39 @@ body {
 .main-content {
   flex: 1;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Error Banner */
+.error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: rgba(243, 139, 168, 0.15);
+  border-bottom: 1px solid var(--red);
+  color: var(--red);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.error-banner-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.error-banner-close {
+  background: none;
+  border: none;
+  color: var(--red);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 4px;
+  margin-left: 12px;
+  line-height: 1;
 }
 
 .page-empty {
@@ -1299,4 +1332,47 @@ input:focus {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+}
+
+/* Recent repo item layout for action buttons */
+.recent-repo-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.recent-repo-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.recent-repo-item:hover .recent-repo-actions {
+  opacity: 1;
+}
+
+/* Repo dropdown item with remove button */
+.repo-dropdown-item {
+  flex-direction: row;
+  align-items: center;
+}
+
+.repo-dropdown-item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.repo-remove-btn {
+  opacity: 0;
+  flex-shrink: 0;
+}
+
+.repo-dropdown-item:hover .repo-remove-btn {
+  opacity: 1;
 }

@@ -12,12 +12,18 @@ import SettingsPage from './pages/SettingsPage';
 import './styles/global.css';
 
 function AppContent() {
-  const { currentRepo } = useAppContext();
+  const { currentRepo, error, setError } = useAppContext();
 
   return (
     <div className="app-layout">
       <Sidebar />
       <main className="main-content">
+        {error && (
+          <div className="error-banner">
+            <span className="error-banner-text">{error}</span>
+            <button className="error-banner-close" onClick={() => setError(null)}>×</button>
+          </div>
+        )}
         <Routes>
           <Route path="/" element={
             currentRepo ? <Navigate to="/changes" /> : <WelcomePage />

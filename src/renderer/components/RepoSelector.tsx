@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 
 export default function RepoSelector() {
-  const { config, currentRepo, setCurrentRepo, addRepository } = useAppContext();
+  const { config, currentRepo, setCurrentRepo, addRepository, removeRepository } = useAppContext();
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
@@ -33,6 +33,11 @@ export default function RepoSelector() {
     navigate('/changes');
   };
 
+  const handleRemove = async (repoPath: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    await removeRepository(repoPath);
+  };
+
   return (
     <div className="repo-selector">
       <button
@@ -55,14 +60,23 @@ export default function RepoSelector() {
             <div className="repo-dropdown-list">
               <div className="repo-dropdown-label">Recent Repositories</div>
               {config.repositories.map((repo) => (
-                <button
+                <div
                   key={repo.path}
                   className={`repo-dropdown-item ${currentRepo?.path === repo.path ? 'active' : ''}`}
                   onClick={() => handleSelect(repo)}
                 >
-                  <span className="repo-item-name">{repo.name}</span>
-                  <span className="repo-item-path">{repo.path}</span>
-                </button>
+                  <div className="repo-dropdown-item-info">
+                    <span className="repo-item-name">{repo.name}</span>
+                    <span className="repo-item-path">{repo.path}</span>
+                  </div>
+                  <button
+                    className="btn-icon repo-remove-btn"
+                    onClick={(e) => handleRemove(repo.path, e)}
+                    title="Remove from list"
+                  >
+                    x
+                  </button>
+                </div>
               ))}
             </div>
           )}

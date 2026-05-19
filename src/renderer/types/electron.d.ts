@@ -38,6 +38,11 @@ interface FileAPI {
   writeConfig(config: AppConfig): Promise<{ success: boolean }>;
 }
 
+interface ShellAPI {
+  openInVSCode(repoPath: string): Promise<{ success: boolean }>;
+  openInExplorer(repoPath: string): Promise<{ success: boolean }>;
+}
+
 interface GitStatus {
   current: string | null;
   tracking: string | null;
@@ -127,6 +132,7 @@ declare global {
       git: GitAPI;
       gitea: GiteaAPI;
       file: FileAPI;
+      shell: ShellAPI;
     };
   }
 }

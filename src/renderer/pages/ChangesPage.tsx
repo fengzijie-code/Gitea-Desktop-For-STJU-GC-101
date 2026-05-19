@@ -3,10 +3,11 @@ import { useAppContext } from '../context/AppContext';
 import CommitForm from '../components/CommitForm';
 
 export default function ChangesPage() {
-  const { currentRepo, status, refreshStatus, setError } = useAppContext();
+  const { currentRepo, status, refreshStatus, refreshBranch, currentBranch, setError } = useAppContext();
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [diff, setDiff] = useState('');
   const [pushing, setPushing] = useState(false);
+  const [pulling, setPulling] = useState(false);
   const [committing, setCommitting] = useState(false);
 
   useEffect(() => {
@@ -86,7 +87,7 @@ export default function ChangesPage() {
   const handlePush = async () => {
     setPushing(true);
     try {
-      await window.electronAPI.git.push(currentRepo.path);
+      await window.electronAPI.git.push(currentRepo.path, 'origin', currentBranch || undefined);
       await refreshStatus();
     } catch (err: any) {
       setError(err.message);
@@ -96,9 +97,31 @@ export default function ChangesPage() {
   };
 
   const handlePull = async () => {
+    setPulling(true);
     try {
-      await window.electronAPI.git.pull(currentRepo.path);
+      await window.electronAPI.git.pull(currentRepo.path, 'origin', currentBranch || undefined);
       await refreshStatus();
+      await refreshBranch();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setPulling(false);
+    }
+  };
+
+  const handleOpenInVSCode = async () => {
+    if (!currentRepo) return;
+    try {
+      await window.electronAPI.shell.openInVSCode(currentRepo.path);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleOpenInExplorer = async () => {
+    if (!currentRepo) return;
+    try {
+      await window.electronAPI.shell.openInExplorer(currentRepo.path);
     } catch (err: any) {
       setError(err.message);
     }
@@ -120,14 +143,20 @@ export default function ChangesPage() {
       <div className="changes-toolbar">
         <h2>Changes</h2>
         <div className="toolbar-actions">
-          <button onClick={handlePull} title="Pull">
-            ↓ Pull
+          <button onClick={handlePull} disabled={pulling} title="Pull">
+            {pulling ? 'Pulling...' : '↓ Pull'}
           </button>
           <button onClick={handlePush} disabled={pushing} title="Push">
             {pushing ? 'Pushing...' : '↑ Push'}
           </button>
           <button onClick={refreshStatus} title="Refresh">
             ⟳ Refresh
+          </button>
+          <button onClick={handleOpenInVSCode} title="Open in VS Code">
+            {'</>'} VS Code
+          </button>
+          <button onClick={handleOpenInExplorer} title="Open in Explorer">
+            Explorer
           </button>
         </div>
       </div>
