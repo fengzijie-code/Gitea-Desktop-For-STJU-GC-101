@@ -6,6 +6,10 @@ A desktop Git client for [Gitea](https://gitea.io) servers, inspired by GitHub D
 ![Electron](https://img.shields.io/badge/Electron-28-47848F)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
+## Why For SJTU GC？
+
+As a GC engr101 student, our homework and project are all upload onto Focs Gitea Server. Meanwhile we all need a formatted "commit message" for JOJ to grade our homework. For convenience, I designed this application, **which can and only can push with message containing "type" "scope" "build/build joj"**. This application comes **pre-installed with 11 types and 10 scopes** (feat fix docs style refactor perf test build ci chores revert;p1 p2 hw1 hw2 hw3 hw4 hw5 hw6 hw7 hw8). This is the difference between this Gitea Desktop and a normal Gitea Desktop.
+
 ## Features
 
 - **Gitea Integration** — Connect to any Gitea instance with token-based authentication. Browse, search, and clone your repositories.
