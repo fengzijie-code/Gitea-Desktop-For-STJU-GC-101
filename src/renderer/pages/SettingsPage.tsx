@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 export default function SettingsPage() {
-  const { config, addAccount, removeAccount } = useAppContext();
+  const { config, addAccount, removeAccount, currentRepo } = useAppContext();
   const [serverUrl, setServerUrl] = useState('');
   const [token, setToken] = useState('');
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  const [gitName, setGitName] = useState('');
+  const [gitEmail, setGitEmail] = useState('');
+  const [savingConfig, setSavingConfig] = useState(false);
+  const [configResult, setConfigResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  useEffect(() => {
+    if (!currentRepo) return;
+    window.electronAPI.git.getConfig(currentRepo).then(({ name, email }) => {
+      setGitName(name);
+      setGitEmail(email);
+    });
+  }, [currentRepo]);
+
+  const handleSaveConfig = async () => {
+    if (!currentRepo) return;
+    setSavingConfig(true);
+    setConfigResult(null);
+    try {
+      await window.electronAPI.git.setConfig(currentRepo, gitName.trim(), gitEmail.trim());
+      setConfigResult({ success: true, message: 'Git identity saved successfully' });
+    } catch (err: any) {
+      setConfigResult({ success: false, message: err.message });
+    } finally {
+      setSavingConfig(false);
+    }
+  };
 
   const handleTest = async () => {
     if (!serverUrl.trim() || !token.trim()) return;
@@ -60,6 +87,49 @@ export default function SettingsPage() {
   return (
     <div className="settings-page">
       <h2>Settings</h2>
+
+      {currentRepo && (
+        <section className="settings-section">
+          <h3>Git Identity</h3>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+            Configure user.name and user.email for this repository.
+          </p>
+          <div className="form-group">
+            <label>user.name</label>
+            <input
+              type="text"
+              placeholder="Your Name"
+              value={gitName}
+              onChange={(e) => setGitName(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label>user.email</label>
+            <input
+              type="text"
+              placeholder="jAccount@sjtu.edu.cn"
+              value={gitEmail}
+              onChange={(e) => setGitEmail(e.target.value)}
+            />
+          </div>
+
+          {configResult && (
+            <div className={`test-result ${configResult.success ? 'success' : 'error'}`}>
+              {configResult.message}
+            </div>
+          )}
+
+          <div className="form-actions">
+            <button
+              className="btn-primary"
+              onClick={handleSaveConfig}
+              disabled={savingConfig || !gitName.trim() || !gitEmail.trim()}
+            >
+              {savingConfig ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        </section>
+      )}
 
       <section className="settings-section">
         <h3>Gitea Accounts</h3>

@@ -29,6 +29,8 @@ interface GitAPI {
   addRemote(repoPath: string, name: string, url: string): Promise<{ success: boolean }>;
   getInitTemplates(): Promise<{ gitignoreTemplates: string[]; licenseTemplates: string[] }>;
   getUserName(): Promise<string>;
+  getConfig(repoPath: string): Promise<{ name: string; email: string }>;
+  setConfig(repoPath: string, name: string, email: string): Promise<{ success: boolean }>;
 }
 
 interface GiteaAPI {

@@ -51,6 +51,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.invoke('git:get-init-templates'),
     getUserName: () =>
       ipcRenderer.invoke('git:get-user-name'),
+    getConfig: (repoPath: string) =>
+      ipcRenderer.invoke('git:get-config', repoPath),
+    setConfig: (repoPath: string, name: string, email: string) =>
+      ipcRenderer.invoke('git:set-config', repoPath, name, email),
   },
   gitea: {
     testConnection: (serverUrl: string, token: string) =>

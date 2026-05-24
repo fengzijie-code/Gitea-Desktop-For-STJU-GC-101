@@ -371,4 +371,29 @@ export function registerGitHandlers() {
       return '';
     }
   });
+
+  ipcMain.handle('git:get-config', async (_event, repoPath: string) => {
+    try {
+      const git = getGit(repoPath);
+      let name = '', email = '';
+      try { name = (await git.raw(['config', 'user.name'])).trim(); } catch {}
+      try { email = (await git.raw(['config', 'user.email'])).trim(); } catch {}
+      return { name, email };
+    } catch (err: any) {
+      console.error('[git:get-config]', err.message);
+      throw err;
+    }
+  });
+
+  ipcMain.handle('git:set-config', async (_event, repoPath: string, name: string, email: string) => {
+    try {
+      const git = getGit(repoPath);
+      await git.addConfig('user.name', name);
+      await git.addConfig('user.email', email);
+      return { success: true };
+    } catch (err: any) {
+      console.error('[git:set-config]', err.message);
+      throw err;
+    }
+  });
 }
