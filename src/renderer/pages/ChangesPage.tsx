@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import CommitForm from '../components/CommitForm';
 
 export default function ChangesPage() {
-  const { currentRepo, status, refreshStatus, refreshBranch, currentBranch, setError } = useAppContext();
+  const { currentRepo, config, status, refreshStatus, refreshBranch, currentBranch, setError } = useAppContext();
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [diff, setDiff] = useState('');
   const [pushing, setPushing] = useState(false);
@@ -230,6 +230,7 @@ export default function ChangesPage() {
             currentBranch={status?.current || 'branch'}
             stagedCount={stagedFiles.length}
             committing={committing}
+            customScopes={config.customScopes}
             onCommit={handleCommit}
           />
         </div>

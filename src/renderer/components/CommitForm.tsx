@@ -14,7 +14,7 @@ const COMMIT_TYPES = [
   { value: 'revert', label: 'revert - 回退' },
 ];
 
-const COMMIT_SCOPES = [
+const DEFAULT_SCOPES = [
   'p1', 'p2', 'hw1', 'hw2', 'hw3', 'hw4', 'hw5', 'hw6', 'hw7', 'hw8',
 ];
 
@@ -22,10 +22,14 @@ interface CommitFormProps {
   currentBranch: string;
   stagedCount: number;
   committing: boolean;
+  customScopes?: string[];
   onCommit: (message: string, options?: { allowEmpty?: boolean }) => void;
 }
 
-export default function CommitForm({ currentBranch, stagedCount, committing, onCommit }: CommitFormProps) {
+export { DEFAULT_SCOPES };
+
+export default function CommitForm({ currentBranch, stagedCount, committing, customScopes, onCommit }: CommitFormProps) {
+  const scopes = customScopes && customScopes.length > 0 ? customScopes : DEFAULT_SCOPES;
   const [type, setType] = useState('');
   const [scope, setScope] = useState('');
   const [message, setMessage] = useState('');
@@ -67,7 +71,7 @@ export default function CommitForm({ currentBranch, stagedCount, committing, onC
         </select>
         <select value={scope} onChange={(e) => setScope(e.target.value)}>
           <option value="">Scope...</option>
-          {COMMIT_SCOPES.map((s) => (
+          {scopes.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>

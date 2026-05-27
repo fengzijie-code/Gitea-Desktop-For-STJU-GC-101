@@ -818,6 +818,51 @@ body {
   color: var(--text-muted);
 }
 
+/* Scope Tags */
+.scope-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scope-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.scope-tag-remove {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 2px;
+}
+
+.scope-tag-remove:hover {
+  color: var(--red);
+}
+
+.scope-add-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.scope-add-form input {
+  flex: 1;
+  max-width: 200px;
+}
+
 .add-account-form {
   background: var(--bg-secondary);
   padding: 20px;

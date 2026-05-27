@@ -93,6 +93,7 @@ interface RemoteInfo {
 interface AppConfig {
   accounts: GiteaAccount[];
   repositories: SavedRepository[];
+  customScopes?: string[];
 }
 
 interface GiteaAccount {

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
+import { DEFAULT_SCOPES } from '../components/CommitForm';
 
 export default function SettingsPage() {
-  const { config, addAccount, removeAccount, currentRepo } = useAppContext();
+  const { config, addAccount, removeAccount, updateConfig, currentRepo } = useAppContext();
   const [serverUrl, setServerUrl] = useState('');
   const [token, setToken] = useState('');
   const [testing, setTesting] = useState(false);
@@ -12,6 +13,25 @@ export default function SettingsPage() {
   const [gitEmail, setGitEmail] = useState('');
   const [savingConfig, setSavingConfig] = useState(false);
   const [configResult, setConfigResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  const [newScope, setNewScope] = useState('');
+  const scopes = config.customScopes && config.customScopes.length > 0 ? config.customScopes : DEFAULT_SCOPES;
+
+  const handleAddScope = async () => {
+    const trimmed = newScope.trim();
+    if (!trimmed || scopes.includes(trimmed)) return;
+    await updateConfig({ ...config, customScopes: [...scopes, trimmed] });
+    setNewScope('');
+  };
+
+  const handleRemoveScope = async (scope: string) => {
+    const updated = scopes.filter((s) => s !== scope);
+    await updateConfig({ ...config, customScopes: updated });
+  };
+
+  const handleResetScopes = async () => {
+    await updateConfig({ ...config, customScopes: undefined });
+  };
 
   useEffect(() => {
     if (!currentRepo) return;
@@ -132,6 +152,51 @@ export default function SettingsPage() {
       )}
 
       <section className="settings-section">
+        <h3>Commit Scopes</h3>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+          自定义 conventional commit 中的 scope 列表。
+        </p>
+
+        <div className="scope-list">
+          {scopes.map((s) => (
+            <span key={s} className="scope-tag">
+              {s}
+              <button
+                className="scope-tag-remove"
+                onClick={() => handleRemoveScope(s)}
+                title="Remove"
+              >&times;</button>
+            </span>
+          ))}
+        </div>
+
+        <div className="scope-add-form">
+          <input
+            type="text"
+            placeholder="新 scope 名称"
+            value={newScope}
+            onChange={(e) => setNewScope(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleAddScope(); }}
+          />
+          <button
+            className="btn-primary"
+            onClick={handleAddScope}
+            disabled={!newScope.trim() || scopes.includes(newScope.trim())}
+          >
+            添加
+          </button>
+          {config.customScopes && (
+            <button
+              className="btn-secondary"
+              onClick={handleResetScopes}
+            >
+              恢复默认
+            </button>
+          )}
+        </div>
+      </section>
+
+      <section className="settings-section">
         <h3>Gitea Accounts</h3>
 
         {config.accounts.length > 0 && (
@@ -206,7 +271,7 @@ export default function SettingsPage() {
 
       <section className="settings-section">
         <h3>About</h3>
-        <p>Gitea Desktop v1.3.0</p>
+        <p>Gitea Desktop v1.3.1</p>
         <p>A desktop client for Gitea, inspired by GitHub Desktop.</p>
       </section>
     </div>
